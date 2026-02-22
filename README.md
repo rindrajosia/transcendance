@@ -33,6 +33,23 @@ If you are running the project multiple times:
 - docker compose up
 ---
 
+## 🚀 Run the Project in Development mode (Docker - Recommended)
+
+Open **PowerShell** in the project root folder (`transcendance`) and run:
+- docker-compose up postgres redis rabbitmq
+This command will launch: postgres redis rabbitmq in docker.
+
+**To run NestJS in your local development computer**
+- cd backend
+- npm install
+- npm run start:dev
+
+**To run NextJS in your local development computer**
+- cd frontend
+- npm install
+- npm run dev
+
+
 ## 🌐 Access the Application
 Open Docker Desktop
 - Go to Containers

@@ -97,3 +97,57 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
 
+## 
+NODE_ENV=development
+PORT=8000
+
+DATABASE_HOST=localhost
+DATABASE_PORT=5432
+DATABASE_USER=postgres
+DATABASE_PASSWORD=123456789
+DATABASE_NAME=spotify_local
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=123456789
+
+RABBITMQ_URI=amqp://admin:ChangeMoi_RabbitMQ!@localhost:5672
+
+JWT_SECRET=dev_secret_super_long
+JW_TOKEN_AUDIENCE=localhost:8000
+JW_TOKEN_ISSUER=localhost:8000
+JW_ACCESS_TOKEN_TTL=3600
+JW_REFRESH_TOKEN_TTL=86400
+
+GOOGLE_CLIENT_ID=
+
+199802088131-b9iu2effba5u7bitm0aitma54noj9g86.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
+
+TFA_APP_NAME=auth-playground
+
+
+## .env.docker
+
+NODE_ENV=docker
+
+DATABASE_HOST=postgres
+DATABASE_PORT=5432
+DATABASE_USER=postgres
+DATABASE_PASSWORD=123456789
+DATABASE_NAME=spotify_docker
+
+JWT_SECRET=docker_secret_super_long
+JW_TOKEN_AUDIENCE=localhost:8000
+JW_TOKEN_ISSUER=localhost:8000
+JW_ACCESS_TOKEN_TTL=3600
+JW_REFRESH_TOKEN_TTL=86400
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_PASSWORD=123456789
+
+GOOGLE_CLIENT_ID=199802088131-b9iu2effba5u7bitm0aitma54noj9g86.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
+
+TFA_APP_NAME=auth-playground

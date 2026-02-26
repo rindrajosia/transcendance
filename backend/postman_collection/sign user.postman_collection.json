@@ -1,0 +1,130 @@
+{
+	"info": {
+		"_postman_id": "095b6595-1988-4154-b182-367141548add",
+		"name": "sign user",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13068950"
+	},
+	"item": [
+		{
+			"name": "Sign in",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"user2@nestjs.com\",\r\n    \"password\": \"Password!123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/authentication/sign-in",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"authentication",
+						"sign-in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign in 2FA",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"user1@nestjs.com\",\r\n    \"password\": \"Password!123\",\r\n    \"tfaCode\": \"661320\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/authentication/sign-in",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"authentication",
+						"sign-in"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign up",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"user #2\",\r\n    \"email\": \"user2@nestjs.com\",\r\n    \"password\": \"Password!123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/authentication/sign-up",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"authentication",
+						"sign-up"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh tokens",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjgsInJlZnJlc2hUb2tlbklkIjoiZjcyY2IxNjMtMmEyMS00NjI3LWFjYjQtYmU0OTZhYjA1NDZmIiwiaWF0IjoxNzcxOTU2NjIwLCJleHAiOjE3NzIwNDMwMjAsImF1ZCI6ImxvY2FsaG9zdDo4MDAwIiwiaXNzIjoibG9jYWxob3N0OjgwMDAifQ.-uIpDAl4AYYaTB8xOJZmCOGElHLx5n3nOMpp_vf88hs\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/authentication/refresh-tokens",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"authentication",
+						"refresh-tokens"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

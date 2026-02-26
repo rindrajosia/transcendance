@@ -1,0 +1,38 @@
+{
+	"info": {
+		"_postman_id": "a77c0852-a788-4caf-9c04-e9a7daf22f6e",
+		"name": "2FA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13068950"
+	},
+	"item": [
+		{
+			"name": "Generate Qr Code",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjE1LCJlbWFpbCI6InVzZXIyQG5lc3Rqcy5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzIxMTgyOTgsImV4cCI6MTc3MjEyMTg5OCwiYXVkIjoibG9jYWxob3N0OjgwMDAiLCJpc3MiOiJsb2NhbGhvc3Q6ODAwMCJ9.zOmftuzGVUhFqIYJRrCzA4PNiStV61f-mZjmR_mUYr0",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8000/api/authentication/2fa/generate",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"authentication",
+						"2fa",
+						"generate"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

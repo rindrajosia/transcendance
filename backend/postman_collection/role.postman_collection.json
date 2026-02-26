@@ -1,0 +1,45 @@
+{
+	"info": {
+		"_postman_id": "4f0cbae7-7b02-4baa-a91d-399c488a850a",
+		"name": "role",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "13068950"
+	},
+	"item": [
+		{
+			"name": "create role",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Barear eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEyLCJlbWFpbCI6InVzZXIxQG5lc3Rqcy5jb20iLCJpYXQiOjE3NzIwOTcxOTMsImV4cCI6MTc3MjEwMDc5MywiYXVkIjoibG9jYWxob3N0OjgwMDAiLCJpc3MiOiJsb2NhbGhvc3Q6ODAwMCJ9.uMMHo3L_PBtv7WZJclykdwP1ENqdT0v-MpdKBTU2_iY",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"role\": \"user\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8000/api/role",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"role"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

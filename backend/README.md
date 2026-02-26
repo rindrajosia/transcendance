@@ -119,10 +119,8 @@ JW_TOKEN_ISSUER=localhost:8000
 JW_ACCESS_TOKEN_TTL=3600
 JW_REFRESH_TOKEN_TTL=86400
 
-GOOGLE_CLIENT_ID=
-199802088131-b9iu2effba5u7bitm0aitma54noj9g86.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=
-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
+G_CLIENT_ID=199802088131-b9iu2effba5u7bitm0aitma54noj9g86.apps.googleusercontent.com
+G_CLIENT_SECRET=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
 
 TFA_APP_NAME=auth-playground
 
@@ -147,9 +145,7 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 REDIS_PASSWORD=123456789
 
-GOOGLE_CLIENT_ID=
-199802088131-b9iu2effba5u7bitm0aitma54noj9g86.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=
-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
+G_CLIENT_ID=199802088131-b9iu2effba5u7bitm0aitma54noj9g86.apps.googleusercontent.com
+G_CLIENT_SECRET=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
 
 TFA_APP_NAME=auth-playground

@@ -40,4 +40,16 @@ export class OtpAuthenticationService {
             {tfaSecret: secret, isTfaEnabled: true}
         );
     }
+
+    async disableTfaForUser(email: string) {
+        const { id } = await this.userRepository.findOneOrFail({
+            where: {email},
+            select: {id: true},
+        });
+
+        await this.userRepository.update(
+            {id},
+            {tfaSecret: null, isTfaEnabled: false}
+        );
+    }
 }

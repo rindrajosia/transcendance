@@ -29,8 +29,8 @@ export class User {
     @Column({default: false})
     isTfaEnabled: Boolean;
 
-    @Column({nullable: true})
-    tfaSecret: string;
+    @Column({ type: 'varchar', nullable: true })
+    tfaSecret: string | null;
 
     @ManyToOne(() => Role, { eager: true, nullable: false })
     role: Role;

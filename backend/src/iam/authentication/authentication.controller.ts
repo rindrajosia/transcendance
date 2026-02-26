@@ -10,6 +10,7 @@ import type { ActiveUserData } from '../interfaces/active-user-data';
 import { OtpAuthenticationService } from './otp-authentication.service';
 import type { Response } from 'express';
 import { toFileStream } from 'qrcode';
+import { LogOutDto } from './dto/log-out.dto';
 
 @Auth(AuthType.None)
 @Controller('authentication')
@@ -28,6 +29,15 @@ export class AuthenticationController {
     @Post('sign-in')
     signIn(@Body() signInDto: SignInDto) {
         return this.authService.signIn(signInDto);
+    }
+
+    @HttpCode(HttpStatus.OK)
+    @Post('log-out')
+    logout(
+        @ActiveUser() user: ActiveUserData,
+        @Body() logoutDto: LogOutDto
+    ) {
+        return this.authService.logout(logoutDto);
     }
 
     @HttpCode(HttpStatus.OK)

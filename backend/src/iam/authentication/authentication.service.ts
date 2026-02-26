@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException, Inject, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException, Inject, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -16,6 +16,7 @@ import { InvalidatedRefreshTokenError } from './errors/invalidated-refresh-token
 import { Role } from 'src/roles/entities/role.entity';
 import { RoleType } from 'src/roles/enums/role-type.enum';
 import { OtpAuthenticationService } from './otp-authentication.service';
+import { LogOutDto } from './dto/log-out.dto';
 
 
 @Injectable()
@@ -77,7 +78,10 @@ export class AuthenticationService {
         
         if(user.isTfaEnabled) {
             if (!signInDto.tfaCode) {
-                throw new UnauthorizedException('Invalid 2FA code');
+                throw new BadRequestException('Invalid 2FA code');
+            }
+            if (!user.tfaSecret) {
+                throw new BadRequestException('TFA not enabled for this user');
             }
             const isValid = this.otpAuthService.verifyCode(signInDto.tfaCode, user.tfaSecret);
             if(!isValid) {
@@ -85,6 +89,42 @@ export class AuthenticationService {
             }
         }
         return await this.generateTokens(user);
+    }
+
+   async logout(logoutDto: LogOutDto) {
+        try {
+             const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
+            Pick<ActiveUserData, 'sub'> & { refreshTokenId: string }
+            >(logoutDto.refreshToken, {
+                secret: this.jwtConfiguration.secret,
+                audience: this.jwtConfiguration.audience,
+                issuer: this.jwtConfiguration.issuer,
+            });
+            
+            const user = await this.usersRepository.findOneByOrFail({
+                id: sub,
+            });
+
+            const isValid = await this.refreshTokenIdsStorage.validate(
+                user.id,
+                refreshTokenId
+            );
+
+            if(isValid) {
+                await this.refreshTokenIdsStorage.invalidate(user.id);
+            }
+
+            if(user.isTfaEnabled) {
+                const isValid = this.otpAuthService.disableTfaForUser(user.email); 
+            }
+
+            return user;
+        } catch(err) {
+            if(err instanceof InvalidatedRefreshTokenError) {
+                throw new UnauthorizedException('Access denied');
+            }
+            throw new UnauthorizedException();
+        }
     }
 
    async refreshTokens(refreshTokenDto: RefreshTokenDto) {

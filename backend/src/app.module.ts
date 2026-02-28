@@ -32,6 +32,7 @@ import { SongsModule } from './songs/songs.module';
         JW_TOKEN_ISSUER: Joi.string().required(),
         GOOGLE_CLIENT_SECRET: Joi.string().required(),
         GOOGLE_CLIENT_ID: Joi.string().required(),
+        UPLOADED_FILES_DESTINATION: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRootAsync({

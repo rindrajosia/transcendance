@@ -70,5 +70,12 @@ export class SongsController {
 
     return streamableFile;
   }
+
+  @Delete(':id')
+  async delete(
+      @Param('id',new ParseIntPipe({errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE})) id: number,
+  ) {
+      await this.songsService.delete(id);
+  }
   
 }

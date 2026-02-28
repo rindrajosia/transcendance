@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, NotFoundException, StreamableFile } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, InternalServerErrorException, NotFoundException, StreamableFile } from '@nestjs/common';
 import { CreateSongDto } from './dto/create-song.dto';
 import { Song } from './entities/song.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,6 +8,7 @@ import RangeParser from 'range-parser';
 import { stat } from 'fs/promises';
 import { join } from 'path';
 import { createReadStream, existsSync } from 'fs';
+import { unlink } from 'fs/promises';
 
 @Injectable()
 export class SongsService {
@@ -38,8 +39,6 @@ export class SongsService {
   async getSongMetadata(id: number) {
 
     const song = await this.songsRepository.findOne({where: {id},});
-
-    
 
     if (!song) {
       throw new NotFoundException();
@@ -102,6 +101,24 @@ export class SongsService {
       disposition: `inline; filename="${songMetadata.filename}"`,
       type: songMetadata.mimetype,
     });
+  }
+
+  async delete(id: number) {
+    const song = await this.songsRepository.findOne({ where: { id } });
+
+    if (!song) {
+      throw new NotFoundException();
+    }
+
+    if (existsSync(song.path)) {
+      try {
+        await unlink(song.path);
+      } catch (err) {
+        throw new InternalServerErrorException('Failed to delete file');
+      }
+    }
+
+    return await this.songsRepository.remove(song);
   }
   
 }

@@ -13,4 +13,8 @@ export class VideoDto {
     @IsString()
     @IsNotEmpty()
     mimetype: string;
+
+    @IsString()
+    @IsNotEmpty()
+    cover: string;
 }

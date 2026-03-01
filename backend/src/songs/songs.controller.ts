@@ -1,11 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, BadRequestException, UploadedFile, Header, Headers, Res, ParseIntPipe, HttpStatus, ParseFilePipeBuilder } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, BadRequestException, UploadedFile, Header, Headers, Res, ParseIntPipe, HttpStatus, ParseFilePipeBuilder, UploadedFiles } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongDto } from './dto/create-song.dto';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import type { ActiveUserData } from 'src/iam/interfaces/active-user-data';
 import { Roles } from 'src/iam/authorization/decorators/roles.decorator';
 import { RoleType } from 'src/roles/enums/role-type.enum';
-import LocalFilesInterceptor from './utils/localFiles.interceptor';
+import LocalFilesInterceptor, { LocalFilesInterceptorFields } from './utils/localFiles.interceptor';
 import type { Express, Response } from 'express';
 import { Auth } from 'src/iam/authentication/decorators/auth.decorator';
 import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
@@ -19,33 +19,56 @@ export class SongsController {
 
   @Post()
   @UseInterceptors(
-    LocalFilesInterceptor({
-      fieldName: 'file',
-      path: '/videos',
-      fileFilter: (request, file, callback) => {
-        const allowedExtensions = ['.mp4', '.webm', '.ogg', '.mov'];
-        const fileExtension = extname(file.originalname).toLowerCase();
-        if (!file.mimetype.includes('video') || !allowedExtensions.includes(fileExtension)) {
-          return callback(
-            new BadRequestException('Provide a valid video'),
-            false,
-          );
+    LocalFilesInterceptorFields({
+      fields: [
+        { name: 'cover', maxCount: 1 },
+        { name: 'song', maxCount: 1 },
+      ],
+      path: '/songs',
+      fileFilter: (req, file, callback) => {
+        const ext = extname(file.originalname).toLowerCase();
+        const audioMaxSize = 500 * 1024 * 1024;// 500Mb
+        const coverMaxSize = 100 * 1024 * 1024;// 100Mb
+
+        if (file.fieldname === 'song') {
+          const allowedAudio = ['.mp3', '.wav', '.ogg'];
+          if (!file.mimetype.includes('audio') || !allowedAudio.includes(ext)) {
+            return callback(new BadRequestException('Invalid audio'), false);
+          }
+          if(file.size > audioMaxSize) {
+            return callback(new BadRequestException('Your song file is too big'), false);
+          }
         }
+
+        if (file.fieldname === 'cover') {
+          const allowedImages = ['.png', '.jpg', '.jpeg'];
+          if (!file.mimetype.includes('image') || !allowedImages.includes(ext)) {
+            return callback(new BadRequestException('Invalid image'), false);
+          }
+          if(file.size > 1000) {
+            return callback(new BadRequestException('Your cover file is too big'), false);
+          }
+        }
+
         callback(null, true);
       },
     }),
   )
   addSong(
-    @UploadedFile(
-      new ParseFilePipeBuilder()
-        .addMaxSizeValidator({ maxSize: 500 * 1024 * 1024 }) // 500Mb
-        .build({ errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY }),
-    )
-  file: Express.Multer.File,@Body() songCreateDto: CreateSongDto) {
-    return this.songsService.create({
-        filename: file.filename,
-        path: file.path,
-        mimetype: file.mimetype,
+   @UploadedFiles()
+    files: {
+      cover: Express.Multer.File[];
+      song: Express.Multer.File[];
+    },@Body() songCreateDto: CreateSongDto)
+    {
+      const cover = (files.cover)[0];
+      const song = (files.song)[0];
+
+      return this.songsService.create({
+        filename: song.filename,
+        path: song.path,
+        mimetype: song.mimetype,
+        cover: cover.path,
       }, songCreateDto);
   }
 
@@ -76,6 +99,16 @@ export class SongsController {
       @Param('id',new ParseIntPipe({errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE})) id: number,
   ) {
       await this.songsService.delete(id);
+  }
+
+
+  @Get('cover/:id')
+  async getFile(
+      @Param('id',new ParseIntPipe({errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE})) id: number,
+      @Res() res: Response
+  ) {
+      const path = await this.songsService.getCoverById(id);
+      return res.sendFile(path);
   }
   
 }

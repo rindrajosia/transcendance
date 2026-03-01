@@ -20,4 +20,7 @@ export class Song {
     @Column({ type: 'text', nullable: false})
     mimetype: string;
 
+    @Column({ type: 'text', nullable: false})
+    cover: string;
+
 }

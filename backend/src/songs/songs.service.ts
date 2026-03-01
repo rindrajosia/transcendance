@@ -7,8 +7,9 @@ import { VideoDto } from './dto/song.dto';
 import RangeParser from 'range-parser';
 import { stat } from 'fs/promises';
 import { join } from 'path';
-import { createReadStream, existsSync } from 'fs';
+import { createReadStream, existsSync, } from 'fs';
 import { unlink } from 'fs/promises';
+import * as fs from 'fs';
 
 @Injectable()
 export class SongsService {
@@ -24,7 +25,7 @@ export class SongsService {
         song.path = metaData.path;
         song.filename = metaData.filename;
         song.mimetype = metaData.mimetype;
-
+        song.cover = metaData.cover;
         await this.songsRepository.save(song);
     } catch (err) {
         console.error(err);
@@ -44,7 +45,7 @@ export class SongsService {
       throw new NotFoundException();
     }
 
-    const songMetada: VideoDto = {filename: song.filename, path: song.path, mimetype: song.mimetype};
+    const songMetada: VideoDto = {filename: song.filename, path: song.path, mimetype: song.mimetype, cover: song.cover};
     return songMetada;
   }
 
@@ -101,6 +102,21 @@ export class SongsService {
       disposition: `inline; filename="${songMetadata.filename}"`,
       type: songMetadata.mimetype,
     });
+  }
+
+  async getCoverById(id: number) {
+    const songMetadata = await this.getSongMetadata(id);
+    
+    if (!existsSync(songMetadata.cover)) {
+      throw new NotFoundException('File not found on disk');
+    }
+    const filePath = join(process.cwd(), songMetadata.cover);
+
+    if (!fs.existsSync(filePath)) {
+      throw new NotFoundException('File not found');
+    }
+
+     return filePath;
   }
 
   async delete(id: number) {

@@ -11,7 +11,7 @@ export class RefreshTokenIdsStorage {
     }
 
     async validate(userId: number, tokenId: string): Promise<boolean> {
-        const storedId = await this.redisClient.get(this.getKey(userId));
+        const storedId =  await this.redisClient.get(this.getKey(userId));
         if(storedId !== tokenId) {
             throw new InvalidatedRefreshTokenError();
         }
@@ -20,6 +20,10 @@ export class RefreshTokenIdsStorage {
 
     async invalidate(userId: number): Promise<void> {
         await this.redisClient.del(this.getKey(userId));
+    }
+
+    async getValue(key: number): Promise<string | null> {
+        return await this.redisClient.get(this.getKey(key));
     }
 
     private getKey(userId: number): string {

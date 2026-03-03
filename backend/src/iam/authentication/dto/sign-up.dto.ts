@@ -14,6 +14,10 @@ export class SignUpDto {
     @MinLength(10)
     password: string;
 
+    @IsNotEmpty()
+    confirm_password: string;
+
+
     @IsOptional()
     @IsString()
     avatar_url?: string;

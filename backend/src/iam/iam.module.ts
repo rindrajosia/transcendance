@@ -20,6 +20,9 @@ import { RolesGuard } from './authorization/guards/roles/roles.guard';
 import { GoogleAuthenticationService } from './authentication/social/google-authentication.service';
 import { GoogleAuthenticationController } from './authentication/social/google-authentication.controller';
 import { OtpAuthenticationService } from './authentication/otp-authentication.service';
+import { ResetService } from './reset/reset.service';
+import { ResetController } from './reset/reset.controller';
+import { ResetModule } from './reset/reset.module';
 
 @Module({
   imports: [
@@ -27,6 +30,7 @@ import { OtpAuthenticationService } from './authentication/otp-authentication.se
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     RedisModule,
+    ResetModule,
 ],
   providers: [
     {
@@ -46,7 +50,8 @@ import { OtpAuthenticationService } from './authentication/otp-authentication.se
     RefreshTokenIdsStorage,
     GoogleAuthenticationService,
     OtpAuthenticationService,
+    ResetService,
   ],
-  controllers: [AuthenticationController, GoogleAuthenticationController],
+  controllers: [AuthenticationController, GoogleAuthenticationController, ResetController],
 })
 export class IamModule {}

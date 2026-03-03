@@ -16,7 +16,7 @@ import { InvalidatedRefreshTokenError } from './errors/invalidated-refresh-token
 import { Role } from 'src/roles/entities/role.entity';
 import { RoleType } from 'src/roles/enums/role-type.enum';
 import { OtpAuthenticationService } from './otp-authentication.service';
-import { LogOutDto } from './dto/log-out.dto';
+
 
 
 @Injectable()
@@ -45,10 +45,16 @@ export class AuthenticationService {
             if (signUpDto.bio)
                 user.bio = signUpDto.bio;
             user.email = signUpDto.email;
+            if (signUpDto.confirm_password != signUpDto.password)
+                throw new UnauthorizedException('Password does not match');
             user.password = await this.hashingService.hash(signUpDto.password);
             user.role = role;
 
-            await this.usersRepository.save(user);
+            const userRet = await this.usersRepository.save(user);
+
+            const { password, ...rest} = userRet;
+            return rest;
+
         } catch (err) {
             console.error(err);
 
@@ -91,7 +97,7 @@ export class AuthenticationService {
         return await this.generateTokens(user);
     }
 
-   async logout(logoutDto: LogOutDto) {
+   async logout(logoutDto: RefreshTokenDto) {
         try {
              const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
             Pick<ActiveUserData, 'sub'> & { refreshTokenId: string }
@@ -104,7 +110,7 @@ export class AuthenticationService {
             const user = await this.usersRepository.findOneByOrFail({
                 id: sub,
             });
-
+            
             const isValid = await this.refreshTokenIdsStorage.validate(
                 user.id,
                 refreshTokenId
@@ -117,11 +123,9 @@ export class AuthenticationService {
             if(user.isTfaEnabled) {
                 const isValid = this.otpAuthService.disableTfaForUser(user.email); 
             }
-
-            return user;
         } catch(err) {
             if(err instanceof InvalidatedRefreshTokenError) {
-                throw new UnauthorizedException('Access denied');
+                throw new UnauthorizedException('Access denied token');
             }
             throw new UnauthorizedException();
         }
@@ -178,6 +182,39 @@ export class AuthenticationService {
             accessToken,
             refreshToken
         };
+    }
+
+    async getUser(refreshTokenDto: RefreshTokenDto) {
+        try {
+             const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
+            Pick<ActiveUserData, 'sub'> & { refreshTokenId: string }
+            >(refreshTokenDto.refreshToken, {
+                secret: this.jwtConfiguration.secret,
+                audience: this.jwtConfiguration.audience,
+                issuer: this.jwtConfiguration.issuer,
+            });
+            
+            const user = await this.usersRepository.findOneByOrFail({
+                id: sub,
+            });
+
+            const isValid = await this.refreshTokenIdsStorage.validate(
+                user.id,
+                refreshTokenId
+            );
+
+            if(!isValid) {
+                throw new Error('Refresh token is invalid');
+            }
+
+            const { password, ...rest} = user;
+            return rest;
+        } catch(err) {
+            if(err instanceof InvalidatedRefreshTokenError) {
+                throw new UnauthorizedException('Access denied');
+            }
+            throw new UnauthorizedException();
+        }
     }
 
     private async signToken<T>(userId: number, expiresIn: number, payload?: T){

@@ -49,13 +49,16 @@ export class AuthenticationController {
         @Res({passthrough: true}) response: Response
     ) {
         const credential = await this.authService.signIn(signInDto);
+        if(this.authService.getIsConnected())
+        {
+            response.cookie('refreshToken', credential.refreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'lax',
+                maxAge: this.jwtConfiguration.refreshTokenTtl * 1000,
+            });
+        }
         
-        response.cookie('refreshToken', credential.refreshToken, {
-            httpOnly: true,
-            secure: true,
-            sameSite: 'lax',
-            maxAge: this.jwtConfiguration.refreshTokenTtl * 1000,
-        });
 
         return credential;
     }

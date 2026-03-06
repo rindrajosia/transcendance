@@ -29,9 +29,9 @@ export class AuthenticationService {
         @Inject(jwtConfig.KEY)
         private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
         private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
-        private readonly otpAuthService: OtpAuthenticationService
+        private readonly otpAuthService: OtpAuthenticationService,
     ){}
-
+    private isConnected: boolean;
     async signUp(signUpDto: SignUpDto) {
         try {
             const role = await this.rolesRepository.findOne({where: { role: RoleType.USER}});
@@ -68,6 +68,7 @@ export class AuthenticationService {
     }
 
     async signIn(signInDto: SignInDto) {
+        this.isConnected = false;
         const user = await this.usersRepository.findOneBy({
             email: signInDto.email,
         });
@@ -81,7 +82,9 @@ export class AuthenticationService {
         if(!isEqual) {
             throw new UnauthorizedException('Password does not match');
         }
+
         
+
         if(user.isTfaEnabled) {
             if (!signInDto.tfaCode) {
                 throw new BadRequestException('Invalid 2FA code');
@@ -93,7 +96,10 @@ export class AuthenticationService {
             if(!isValid) {
                 throw new UnauthorizedException('Invalid 2FA code');
             }
+            this.isConnected = true;
+            console.log(user);
         }
+        
         return await this.generateTokens(user);
     }
 
@@ -123,6 +129,7 @@ export class AuthenticationService {
             if(user.isTfaEnabled) {
                 const isValid = this.otpAuthService.disableTfaForUser(user.email); 
             }
+            this.isConnected = false;
         } catch(err) {
             if(err instanceof InvalidatedRefreshTokenError) {
                 throw new UnauthorizedException('Access denied token');
@@ -215,6 +222,9 @@ export class AuthenticationService {
             }
             throw new UnauthorizedException();
         }
+    }
+    getIsConnected(): boolean {
+        return this.isConnected;
     }
 
     private async signToken<T>(userId: number, expiresIn: number, payload?: T){

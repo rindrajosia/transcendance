@@ -30,7 +30,6 @@ import { ResetModule } from './reset/reset.module';
     JwtModule.registerAsync(jwtConfig.asProvider()),
     ConfigModule.forFeature(jwtConfig),
     RedisModule,
-    ResetModule,
 ],
   providers: [
     {
@@ -50,8 +49,8 @@ import { ResetModule } from './reset/reset.module';
     RefreshTokenIdsStorage,
     GoogleAuthenticationService,
     OtpAuthenticationService,
-    ResetService,
   ],
-  controllers: [AuthenticationController, GoogleAuthenticationController, ResetController],
+  controllers: [AuthenticationController, GoogleAuthenticationController],
+  exports: [HashingService],
 })
 export class IamModule {}

@@ -76,6 +76,19 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       NODE_ENV: ${NODE_ENV}
 
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    restart: unless-stopped
+    environment:
+      MH_STORAGE: maildir
+      MH_MAILDIR_PATH: /mailhog/data
+    volumes:
+      - ./mailhog_data:/mailhog/data
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+
   web:
     build:
       context: ./frontend
@@ -84,9 +97,7 @@ services:
     ports:
       - "${WEB_PORT}:3000"
     environment:
-      # Pour les appels côté navigateur (client)
       NEXT_PUBLIC_API_URL: http://localhost:${API_PORT}
-      # Pour les appels côté serveur Next.js (SSR) - utilise le nom du service Docker
       API_URL: http://api:8000
       NODE_ENV: ${NODE_ENV}
     depends_on:

@@ -11,6 +11,7 @@ import * as Joi from 'joi';
 import { RedisModule } from './redis/redis.module';
 import { RoleModule } from './roles/role.module';
 import { SongsModule } from './songs/songs.module';
+import { ResetModule } from './iam/reset/reset.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { SongsModule } from './songs/songs.module';
     RedisModule,
     RoleModule,
     SongsModule,
+    ResetModule
   ],
 })
 export class AppModule {

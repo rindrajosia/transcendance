@@ -36,8 +36,10 @@ If you are running the project multiple times:
 ## 🚀 Run the Project in Development mode (Docker - Recommended)
 
 Open **PowerShell** in the project root folder (`transcendance`) and run:
-- docker-compose up postgres redis rabbitmq
-This command will launch: postgres redis rabbitmq in docker.
+
+- docker-compose up postgres redis rabbitmq mailhog.
+
+This command will launch: postgres redis rabbitmq mailhog in docker.
 
 **To run NestJS in your local development computer**
 - cd backend

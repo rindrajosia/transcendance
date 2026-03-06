@@ -1,21 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, BadRequestException, UploadedFile, Header, Headers, Res, ParseIntPipe, HttpStatus, ParseFilePipeBuilder, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, BadRequestException, UploadedFile, Header, Headers, Res, ParseIntPipe, HttpStatus, ParseFilePipeBuilder, UploadedFiles, Inject, Req, UnauthorizedException } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongDto } from './dto/create-song.dto';
-import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
-import type { ActiveUserData } from 'src/iam/interfaces/active-user-data';
 import { Roles } from 'src/iam/authorization/decorators/roles.decorator';
 import { RoleType } from 'src/roles/enums/role-type.enum';
 import LocalFilesInterceptor, { LocalFilesInterceptorFields } from './utils/localFiles.interceptor';
-import type { Express, Response } from 'express';
+import type { Express, Response, Request } from 'express';
 import { Auth } from 'src/iam/authentication/decorators/auth.decorator';
 import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
 import { extname } from 'path';
+import { AddReactionDto } from './dto/add-reaction.dto';
+import type { ActiveUserData } from 'src/iam/interfaces/active-user-data';
+import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 
 
 @Auth(AuthType.None)
 @Controller('songs')
 export class SongsController {
-  constructor(private readonly songsService: SongsService) {}
+  constructor(
+    private readonly songsService: SongsService,
+    
+  ) {}
+
 
   @Post()
   @UseInterceptors(
@@ -57,18 +62,21 @@ export class SongsController {
   addSong(
    @UploadedFiles()
     files: {
-      cover: Express.Multer.File[];
+      cover?: Express.Multer.File[];
       song: Express.Multer.File[];
     },@Body() songCreateDto: CreateSongDto)
     {
-      const cover = (files.cover)[0];
+      let cover; 
+      if(files.cover) {
+        cover = ((files.cover)[0]).path;
+      }
       const song = (files.song)[0];
 
       return this.songsService.create({
         filename: song.filename,
         path: song.path,
         mimetype: song.mimetype,
-        cover: cover.path,
+        cover,
       }, songCreateDto);
   }
 
@@ -101,14 +109,37 @@ export class SongsController {
       await this.songsService.delete(id);
   }
 
-
+  @Auth(AuthType.Bearer)
   @Get('cover/:id')
   async getFile(
+      @ActiveUser() user: ActiveUserData,
       @Param('id',new ParseIntPipe({errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE})) id: number,
       @Res() res: Response
   ) {
+      console.log(user);
       const path = await this.songsService.getCoverById(id);
       return res.sendFile(path);
   }
+
+  @Auth(AuthType.Bearer)
+  @Get()
+  async getAll(
+      @ActiveUser() user: ActiveUserData,
+  ) {
+      return this.songsService.findAll(user);
+  }
+
+
+  @Auth(AuthType.Bearer)
+  @Post('reaction')
+  async addReaction(
+    @ActiveUser() user: ActiveUserData,
+    @Req() request: Request,
+    @Body() addReactionDto: AddReactionDto
+  ) {
+      return this.songsService.addReaction(addReactionDto, user);;
+  }
+
+
   
 }

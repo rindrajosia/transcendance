@@ -4,4 +4,7 @@ export interface JwtConfig {
   issuer: string;
   accessTokenTtl: number;
   refreshTokenTtl: number;
+  fileDestination: string;
+  cover: string;
+  avatar: string;
 }

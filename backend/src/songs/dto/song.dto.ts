@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString, IsNumber, IsDateString } from 'class-validator';
 
-export class VideoDto {
+export class SongDto {
     @IsString()
     @IsNotEmpty()
     filename: string;
@@ -15,6 +15,5 @@ export class VideoDto {
     mimetype: string;
 
     @IsString()
-    @IsNotEmpty()
-    cover: string;
+    cover?: string;
 }

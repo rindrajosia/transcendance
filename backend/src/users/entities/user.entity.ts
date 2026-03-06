@@ -1,5 +1,7 @@
 import { Entity, Index, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany, ManyToOne } from 'typeorm';
 import { Role } from '../../roles/entities/role.entity';
+import { Reaction } from 'src/reaction/entities/reaction.entity';
+import { Song } from 'src/songs/entities/song.entity';
 
 
 @Entity('users')
@@ -34,6 +36,9 @@ export class User {
 
     @ManyToOne(() => Role, { eager: true, nullable: false })
     role: Role;
+
+    @OneToMany(() => Reaction, (react) => react.user)
+    public songs: Song[];
 
     
 }

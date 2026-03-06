@@ -24,10 +24,10 @@ export class AuthenticationService {
     constructor(
         @InjectRepository(User) private readonly usersRepository: Repository<User>,
         private readonly hashingService: HashingService,
-        private readonly jwtService: JwtService,
         @InjectRepository(Role) private readonly rolesRepository: Repository<Role>,
         @Inject(jwtConfig.KEY)
         private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+        private readonly jwtService: JwtService,
         private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
         private readonly otpAuthService: OtpAuthenticationService,
     ){}
@@ -97,7 +97,6 @@ export class AuthenticationService {
                 throw new UnauthorizedException('Invalid 2FA code');
             }
             this.isConnected = true;
-            console.log(user);
         }
         
         return await this.generateTokens(user);

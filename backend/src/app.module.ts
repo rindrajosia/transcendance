@@ -12,6 +12,7 @@ import { RedisModule } from './redis/redis.module';
 import { RoleModule } from './roles/role.module';
 import { SongsModule } from './songs/songs.module';
 import { ResetModule } from './iam/reset/reset.module';
+import { ReactionModule } from './reaction/reaction.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ResetModule } from './iam/reset/reset.module';
         GOOGLE_CLIENT_SECRET: Joi.string().required(),
         GOOGLE_CLIENT_ID: Joi.string().required(),
         UPLOADED_FILES_DESTINATION: Joi.string().required(),
+        DEFAULT_FILE_COVER: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRootAsync({
@@ -58,7 +60,8 @@ import { ResetModule } from './iam/reset/reset.module';
     RedisModule,
     RoleModule,
     SongsModule,
-    ResetModule
+    ResetModule,
+    ReactionModule
   ],
 })
 export class AppModule {

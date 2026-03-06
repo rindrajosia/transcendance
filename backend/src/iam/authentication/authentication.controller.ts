@@ -30,6 +30,7 @@ export class AuthenticationController {
         return this.authService.signUp(signUpDto);
     }
 
+    @Auth(AuthType.Bearer)
     @Get()
     user(
         @ActiveUser() user: ActiveUserData,
@@ -39,6 +40,7 @@ export class AuthenticationController {
         const refreshToken = request.cookies['refreshToken'];
         if (!refreshToken)
             throw new UnauthorizedException();
+        console.log(user);
         return this.authService.getUser({refreshToken: refreshToken});
     }
 
@@ -63,6 +65,7 @@ export class AuthenticationController {
         return credential;
     }
 
+    @Auth(AuthType.Bearer)
     @HttpCode(HttpStatus.OK)
     @Post('log-out')
     logout(
@@ -80,6 +83,7 @@ export class AuthenticationController {
             sameSite: 'strict',
             path: '/',
         });
+        console.log(user);
         return this.authService.logout({refreshToken});
     }
 
@@ -128,3 +132,19 @@ export class AuthenticationController {
         return type === 'Bearer' ? token : undefined;
     }
 }
+
+
+/*@Auth(AuthType.Bearer)
+@Controller('songs')
+export class SongsController {
+
+  @Post()
+  addSong() {}
+
+  @Get(':id')
+  streamSong() {}
+
+  @Roles(RoleType.ADMIN)
+  @Delete(':id')
+  delete() {}
+}*/
